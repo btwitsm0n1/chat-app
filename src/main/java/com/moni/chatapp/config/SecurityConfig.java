@@ -15,18 +15,24 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(); // Password ko hash (encrypt) karne ke liye
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // API ke liye CSRF off rakhte hain
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // JWT ke liye stateless
+                .csrf(csrf -> csrf.disable())
+                //  SockJS ke iframe ko block hone se bachane ke liye
+                .headers(headers -> headers
+                        .frameOptions(frameOptions -> frameOptions.sameOrigin())
+                )
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll() // Register/Login bina token ke chalega
-                        .requestMatchers("/actuator/**").permitAll() // Health check bina token ke chalega
-                        .anyRequest().authenticated() // Baaki sabke liye token zaroori hai
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers("/ws/**").permitAll() // WebSocket handshake allow karo
+                        .requestMatchers("/test-chat.html").permitAll() // Test page allow karo
+                        .anyRequest().authenticated()
                 );
         return http.build();
     }
