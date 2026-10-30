@@ -1,19 +1,21 @@
 # Real-Time Chat Application
 
-A full-stack real-time chat application built with modern backend technologies.
+A full-stack real-time chat application built using Spring Boot and WebSockets.
 
-## Tech Stack
-- **Backend:** Java 21, Spring Boot 3.x, Spring Security, WebSocket (STOMP)
-- **Database:** MongoDB (for messages & users), Redis (for presence & pub/sub)
-- **Auth:** JWT (JSON Web Tokens)
-- **Frontend:** React (coming soon...)
+##  Tech Stack
+- **Backend:** Java 21, Spring Boot 3.x
+- **Security:** Spring Security + JWT
+- **Database:** MongoDB (for chat history & users)
+- **Cache/Presence:** Redis
+- **Real-time:** WebSocket + STOMP
+- **Frontend:** React (Coming soon)
 
-## Features
-- JWT-based User Registration & Login
-- One-to-one real-time messaging
-- Group chats
-- Online/offline presence
-- Read receipts & typing indicators (WIP)
+##  Features
+- [x] User Registration & Login (JWT Auth)
+- [ ] Real-time One-to-One Chat
+- [ ] Group Chat Rooms
+- [ ] Online/Offline Status
+- [ ] Typing Indicators
 
-## Project Status
- Currently in development. Phase 1 (Setup & Auth) complete.
+##  How to Run Locally
+(To be added later)
