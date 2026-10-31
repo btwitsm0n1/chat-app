@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+</head>
+<body>
+<h3>WebSocket Chat Test</h3>
+<div>
+    <input type="text" id="receiverId" placeholder="Receiver ID (e.g., user2)" value="user2">
+    <button onclick="subscribe()">Subscribe (as Receiver)</button>
+</div>
+<br>
+<div>
+    <input type="text" id="messageInput" placeholder="Type message..." value="Hello!">
+    <button onclick="sendMessage()">Send (as Sender)</button>
+</div>
+<br>
+<div id="output" style="border:1px solid #ccc; padding:10px; height:200px; overflow-y:auto;"></div>
+
+<script>
+    let stompClient = null;
+
+    function connect() {
+        // Yahan aapko Postman se mila hua JWT token paste karna hai
+        const token = "YAHAN_APNA_TOKEN_PASTE_KARO";
+
+        const socket = new SockJS('/ws');
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({"Authorization": "Bearer " + token}, function(frame) {
+            log('Connected: ' + frame);
+        }, function(error) {
+            log('Connection Error: ' + error);
+        });
+    }
+
+    function subscribe() {
+        const receiver = document.getElementById('receiverId').value;
+        stompClient.subscribe('/user/' + receiver + '/queue/messages', function(response) {
+            log('Received: ' + response.body);
+        });
+        log('Subscribed as: ' + receiver);
+    }
+
+    function sendMessage() {
+        const receiver = document.getElementById('receiverId').value;
+        const content = document.getElementById('messageInput').value;
+        stompClient.send('/app/chat', {}, JSON.stringify({
+            senderId: 'user1',
+            receiverId: receiver,
+            content: content
+        }));
+        log('Sent: ' + content + ' to ' + receiver);
+    }
+
+    function log(msg) {
+        const div = document.getElementById('output');
+        div.innerHTML += '<p>' + msg + '</p>';
+        div.scrollTop = div.scrollHeight;
+    }
+
+    // Page load hote hi connect function call hoga
+    connect();
+</script>
+</body>
+</html>
