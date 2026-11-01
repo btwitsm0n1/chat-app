@@ -2,7 +2,7 @@ package com.moni.chatapp.controller;
 
 import com.moni.chatapp.dto.ChatMessage;
 import com.moni.chatapp.model.Message;
-import com.moni.chatapp.repository.MessageRepository;
+import com.moni.chatapp.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -16,25 +16,19 @@ public class ChatController {
     private SimpMessagingTemplate messagingTemplate;
 
     @Autowired
-    private MessageRepository messageRepository;
+    private MessageService messageService; // Repository ki jagah Service use kar rahe hain
 
-    // Client yahan message bhejega: /app/chat
     @MessageMapping("/chat")
     public void processMessage(@Payload ChatMessage chatMessage) {
 
-        // 1. Database mein save karo
-        Message message = new Message();
-        message.setSenderId(chatMessage.getSenderId());
-        message.setReceiverId(chatMessage.getReceiverId());
-        message.setContent(chatMessage.getContent());
-        messageRepository.save(message);
+        // 1. Service ke through database mein save karo
+        Message savedMessage = messageService.saveMessage(chatMessage);
 
         // 2. Receiver ko real-time message push karo
-        // Receiver is URL par subscribe karega: /user/{receiverId}/queue/messages
         messagingTemplate.convertAndSendToUser(
                 chatMessage.getReceiverId(),
                 "/queue/messages",
-                message
+                savedMessage
         );
     }
 }
