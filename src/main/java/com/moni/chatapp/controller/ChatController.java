@@ -31,4 +31,14 @@ public class ChatController {
                 savedMessage
         );
     }
+    // REST API to get chat history with pagination
+    @org.springframework.web.bind.annotation.GetMapping("/api/chat/history")
+    public org.springframework.http.ResponseEntity<org.springframework.data.domain.Page<Message>> getChatHistory(
+            @org.springframework.web.bind.annotation.RequestParam String user1,
+            @org.springframework.web.bind.annotation.RequestParam String user2,
+            @org.springframework.web.bind.annotation.RequestParam(defaultValue = "0") int page,
+            @org.springframework.web.bind.annotation.RequestParam(defaultValue = "20") int size) {
+
+        return org.springframework.http.ResponseEntity.ok(messageService.getChatHistory(user1, user2, page, size));
+    }
 }
