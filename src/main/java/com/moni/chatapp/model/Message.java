@@ -13,8 +13,9 @@ public class Message {
     private String id;
 
     private String senderId;
-    private String receiverId; // 1-to-1 ke liye
-    private String roomId;     // Group chat ke liye
+    private String receiverId;
+    private String roomId;
     private String content;
     private LocalDateTime timestamp = LocalDateTime.now();
+    private String status = "SENT"; // Naya field add hua hai
 }

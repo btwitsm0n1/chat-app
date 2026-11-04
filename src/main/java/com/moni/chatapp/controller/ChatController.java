@@ -4,10 +4,16 @@ import com.moni.chatapp.dto.ChatMessage;
 import com.moni.chatapp.model.Message;
 import com.moni.chatapp.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.Map;
 
 @Controller
 public class ChatController {
@@ -16,29 +22,40 @@ public class ChatController {
     private SimpMessagingTemplate messagingTemplate;
 
     @Autowired
-    private MessageService messageService; // Repository ki jagah Service use kar rahe hain
+    private MessageService messageService;
 
     @MessageMapping("/chat")
     public void processMessage(@Payload ChatMessage chatMessage) {
-
-        // 1. Service ke through database mein save karo
         Message savedMessage = messageService.saveMessage(chatMessage);
-
-        // 2. Receiver ko real-time message push karo
         messagingTemplate.convertAndSendToUser(
                 chatMessage.getReceiverId(),
                 "/queue/messages",
                 savedMessage
         );
     }
-    // REST API to get chat history with pagination
-    @org.springframework.web.bind.annotation.GetMapping("/api/chat/history")
-    public org.springframework.http.ResponseEntity<org.springframework.data.domain.Page<Message>> getChatHistory(
-            @org.springframework.web.bind.annotation.RequestParam String user1,
-            @org.springframework.web.bind.annotation.RequestParam String user2,
-            @org.springframework.web.bind.annotation.RequestParam(defaultValue = "0") int page,
-            @org.springframework.web.bind.annotation.RequestParam(defaultValue = "20") int size) {
 
-        return org.springframework.http.ResponseEntity.ok(messageService.getChatHistory(user1, user2, page, size));
+    @GetMapping("/api/chat/history")
+    public ResponseEntity<Page<Message>> getChatHistory(
+            @RequestParam String user1,
+            @RequestParam String user2,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+
+        return ResponseEntity.ok(messageService.getChatHistory(user1, user2, page, size));
+    }
+
+    // Naya Endpoint Read Receipts ke liye
+    @MessageMapping("/chat.seen")
+    public void markAsSeen(@Payload Map<String, String> payload) {
+        String messageId = payload.get("messageId");
+        String senderId = payload.get("senderId");
+
+        messageService.updateMessageStatus(messageId, "SEEN");
+
+        messagingTemplate.convertAndSendToUser(
+                senderId,
+                "/queue/read-receipts",
+                payload
+        );
     }
 }
