@@ -58,4 +58,18 @@ public class ChatController {
                 payload
         );
     }
+    // Typing Indicator ke liye endpoint
+    @MessageMapping("/chat.typing")
+    public void userTyping(@Payload Map<String, String> payload) {
+        String senderId = payload.get("senderId");
+        String receiverId = payload.get("receiverId");
+        String isTyping = payload.get("isTyping"); // "true" ya "false"
+
+        // Sirf receiver ko signal bhejo
+        messagingTemplate.convertAndSendToUser(
+                receiverId,
+                "/queue/typing",
+                payload
+        );
+    }
 }
