@@ -72,4 +72,18 @@ public class ChatController {
                 payload
         );
     }
+    // Group Chat ke liye naya endpoint
+    @MessageMapping("/chat.group")
+    public void processGroupMessage(@Payload Message message) {
+
+        // 1. Database mein save karo
+        Message savedMessage = messageRepository.save(message);
+
+        // 2. Pura group (room) ko message broadcast karo
+        // Client is topic par subscribe karega: /topic/room/{roomId}
+        messagingTemplate.convertAndSend(
+                "/topic/room/" + message.getRoomId(),
+                savedMessage
+        );
+    }
 }

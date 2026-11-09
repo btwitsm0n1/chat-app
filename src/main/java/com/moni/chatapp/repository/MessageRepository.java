@@ -10,4 +10,6 @@ public interface MessageRepository extends MongoRepository<Message, String> {
     // Pagination ke saath messages fetch karne ke liye
     Page<Message> findBySenderIdAndReceiverIdOrSenderIdAndReceiverIdOrderByTimestampAsc(
             String sender1, String receiver1, String sender2, String receiver2, Pageable pageable);
+    // Room ke messages pagination ke saath nikalne ke liye
+    Page<Message> findByRoomIdOrderByTimestampAsc(String roomId, Pageable pageable);
 }

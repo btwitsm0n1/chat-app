@@ -37,4 +37,9 @@ public class MessageService {
             messageRepository.save(message);
         });
     }
+    // Group chat ki history nikalne ke liye
+    public Page<Message> getGroupChatHistory(String roomId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return messageRepository.findByRoomIdOrderByTimestampAsc(roomId, pageable);
+    }
 }
