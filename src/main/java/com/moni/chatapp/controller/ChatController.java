@@ -12,6 +12,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import com.moni.chatapp.repository.MessageRepository;
 
 import java.util.Map;
 
@@ -23,6 +24,9 @@ public class ChatController {
 
     @Autowired
     private MessageService messageService;
+
+    @Autowired
+    private MessageRepository messageRepository;
 
     @MessageMapping("/chat")
     public void processMessage(@Payload ChatMessage chatMessage) {
