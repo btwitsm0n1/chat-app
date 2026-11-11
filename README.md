@@ -11,11 +11,13 @@ A full-stack real-time chat application built using Spring Boot and WebSockets.
 - **Frontend:** React (Coming soon)
 
 ##  Features
+Features
 - [x] User Registration & Login (JWT Auth)
-- [ ] Real-time One-to-One Chat
-- [ ] Group Chat Rooms
-- [ ] Online/Offline Status
-- [ ] Typing Indicators
+- [x] Real-time One-to-One Chat
+- [x] Online/Offline Status (Redis Presence)
+- [x] Read Receipts & Typing Indicators
+- [x] Group Chat Rooms (Backend Ready)
+- [ ] React Frontend (Coming Soon)
 
 ##  How to Run Locally
 (To be added later)
